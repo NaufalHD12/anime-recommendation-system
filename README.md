@@ -100,7 +100,7 @@ Based on the image above, nearly 37% of the rows (9,213) are missing Score, drop
 - Univariate Analysis  
 Focuses on analyzing one variable at a time.  
     - **anime_filtered**:
-        - Score Distribution
+        - Score Distribution  
          ![score distribution](./images/score_distribution.png)  
          The distribution of anime scores is skewed to the right, with a peak around 6-7. This indicates that a significant portion of anime titles receive relatively high ratings. The presence of a long tail towards lower scores suggests a substantial number of anime with lower ratings or those that are unrated (represented by a score of 0). Overall, the distribution suggests a diverse range of anime quality preferences among viewers.
         - Anime Types Distribution  
