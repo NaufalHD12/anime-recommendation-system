@@ -8,7 +8,7 @@ Anime has gained immense global popularity in recent years, with thousands of ti
 ### Why and How Should This Problem be Solved?
 A personalized recommendation system can bridge the gap by leveraging user preferences and anime attributes to provide tailored suggestions. By analyzing historical user data and anime metadata, such a system can enhance user satisfaction and engagement. Machine learning techniques, particularly content-based and collaborative filtering algorithms, can be employed to develop a robust recommendation system.
 ### Research Findings
-Studies have demonstrated the effectiveness of recommendation systems in improving user satisfaction and interaction in entertainment platforms. Popular approaches include collaborative filtering, which leverages user interaction data, and content-based filtering, which relies on the attributes of items.
+Studies have demonstrated the effectiveness of recommendation systems in improving user satisfaction and interaction in entertainment platforms. Popular approaches include collaborative filtering, which leverages user interaction data, and content-based filtering, which relies on the attributes of items.  
 Link: 
 - https://iopscience.iop.org/article/10.1088/1742-6596/1566/1/012057
 - https://www.ijfmr.com/papers/2023/2/2372.pdf
