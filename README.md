@@ -94,7 +94,7 @@ I load the dataset into a Pandas DataFrame, ensuring it is accessible for analys
         - anime_id: Identifies the anime in the interaction matrix.
         - rating: Represents the user's preference for the anime (used to predict ratings).
 - After that I performed initial inspection to find out general information using **info()** and descriptive statistics using **describe()** on the dataset.
-- Data Cleaning
+- Data Cleaning  
 ![data cleaning](./images/data_cleaning.png)  
 Based on the image above, nearly 37% of the rows (9,213) are missing Score, dropping them may significantly reduce my dataset size, which could impact the robustness of my analysis or model. so I should Filling missing scores with **0** instead of dropping them.
 - Univariate Analysis  
