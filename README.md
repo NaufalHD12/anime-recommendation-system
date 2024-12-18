@@ -18,8 +18,8 @@ Link:
 - How can we help users discover anime that matches their preferences more effectively?
 - How can we leverage anime metadata and user behavior data to create accurate recommendations?
 ### Goals
-- Develop a content-based recommendation algorithm that analyzes anime attributes to suggest similar titles.
-- Build a collaborative filtering algorithm that utilizes user ratings and preferences to recommend anime.
+- Develop a content-based recommendation algorithm that analyzes anime attributes to suggest similar titles. The algorithm aims to achieve a precision of at least 90% precision, ensuring relevant and satisfying recommendations based on anime content.
+- Build a collaborative filtering algorithm that utilizes user ratings and preferences to recommend anime. The algorithm targets a mean absolute error (MAE) below 0.8, guaranteeing personalized and accurate recommendations for users while minimizing prediction errors in user satisfaction.
 ### Solution Statements
 - Content-Based Algorithm  
 Leverages anime metadata such as genres, studios, scores, etc to recommend titles similar to those a user has enjoyed.
@@ -71,32 +71,13 @@ The User Score Dataset enables various analyses and insights into user interacti
 ### Data Condition
 The dataset is relatively clean, with the exception of a few data quality issues. The 'Score' column, which should be numeric, contained non-numeric values like 'unknown'. These values were replaced with 0 and the column was converted to numeric. The 'Genres' column, originally a single string of genres, was transformed into a list of genres for more efficient analysis.
 ### Exploratory Data Analysis
-In this section, I conducted a comprehensive Exploratory Data Analysis (EDA) to gain valuable insights into the dataset. Here's the step:
+This section presents a comprehensive Exploratory Data Analysis (EDA) to gain valuable insights into the dataset. The analysis follows these steps:
 - Data Loading  
-I load the dataset into a Pandas DataFrame, ensuring it is accessible for analysis.
-- Drop Features that Less Relevant
-    - **Anime Dataset**  
-    For content-based filtering, I'll use features that describe the content of the anime. These features help calculate the similarity between items (anime) based on their attributes.  
-    **Features to Use**
-        - anime_id: A unique identifier for each anime.
-        - Name: The official title of the anime.
-        - Genres: Describes the type of anime (e.g., Action, Romance). Use this for calculating similarity.
-        - Synopsis: Provides a detailed description of the anime's plot
-        - Type: Indicates the format of the anime (e.g., TV, Movie, OVA).
-        - Score: Represents the anime's overall rating and popularity.
-        - Studios: Information about the production studio, which can influence style and quality.
-        - Source: Highlights the origin of the story (e.g., Manga, Light Novel, Original).
-        - Popularity: Indicates how widely the anime is recognized.
-    - **User Rating Dataset**  
-    For collaborative filtering I only need the user_id, anime_id, and rating columns. The other columns, Username and Anime Title, are not directly required for collaborative filtering models as they are identifiers or metadata.  
-    **Features to Use**
-        - user_id: Identifies the user in the interaction matrix.
-        - anime_id: Identifies the anime in the interaction matrix.
-        - rating: Represents the user's preference for the anime (used to predict ratings).
-- After that I performed initial inspection to find out general information using **info()** and descriptive statistics using **describe()** on the dataset.
+The dataset is loaded into a Pandas DataFrame, ensuring accessibility for analysis.
+- Drop Features that are Less Relevant
+- Perform initial inspection to obtain general information using **info()** and descriptive statistics using **describe()** on the dataset.
 - Data Cleaning  
-![data cleaning](./images/data_cleaning.png)  
-Based on the image above, nearly 37% of the rows (9,213) are missing Score, dropping them may significantly reduce my dataset size, which could impact the robustness of my analysis or model. so I should Filling missing scores with **0** instead of dropping them.
+37% of the Score rows (9,213) are missing. Dropping these rows may significantly reduce the dataset size, potentially impacting the robustness of the analysis or model. Therefore, missing scores are filled with **0** instead of being dropped.
 - Univariate Analysis  
 Focuses on analyzing one variable at a time.  
     - **anime_filtered**:
@@ -114,7 +95,7 @@ Focuses on analyzing one variable at a time.
         ![rating distribution](./images/ratings_distribution.png)  
         The histogram displays the distribution of user ratings for anime. The majority of ratings cluster around 7-8, indicating that a significant number of users tend to give higher ratings. There is a gradual decrease in frequency as the ratings move towards lower scores, with fewer users giving ratings below 5. This suggests that users generally have positive opinions about anime and are more likely to rate them positively.
 - Multivariate Analysis  
-Examines relationships between variables. For this dataset, I'll analyze interactions between variables like ratings, popularity, and scores.
+Examines relationships between variables. For this dataset, interactions between variables like ratings, popularity, and scores are analyzed.
     - Correlation Analysis to see the relationships between numeric features (Score, Popularity, and rating).  
     ![correlation matrix](./images/correlation_matrix.png)  
     The correlation matrix reveals insights into the relationships between the variables 'Score', 'Popularity', and 'Rating'. A strong negative correlation exists between 'Score' and 'Popularity', suggesting that as popularity increases, the average score tends to decrease. Conversely, a moderate positive correlation is observed between 'Score' and 'Rating', indicating that higher ratings are associated with higher scores. The correlation between 'Popularity' and 'Rating' is weak and negative, suggesting a minimal relationship between these two variables.
@@ -131,26 +112,26 @@ Examines relationships between variables. For this dataset, I'll analyze interac
 ## Data Preparation
 ### Preparation for Content-Based Filtering
 #### Text Vectorization (for 'Synopsis')
-Text vectorization is crucial for transforming textual data into numerical representations that machine learning models can understand. By applying TF-IDF vectorization, we can convert the textual synopses into a matrix of TF-IDF scores, capturing the importance of each word within the context of the entire dataset. This representation allows us to effectively analyze and compare anime synopses, enabling tasks like clustering, classification, or recommendation systems. Additionally, limiting the number of features to 500 helps reduce dimensionality and computational complexity, while still capturing the most relevant information.
+Text vectorization is crucial for transforming textual data into numerical representations that machine learning models can understand. Applying TF-IDF vectorization converts textual synopses into a matrix of TF-IDF scores, capturing the importance of each word within the context of the entire dataset. This representation allows for effective analysis and comparison of anime synopses, enabling tasks like clustering, classification, or recommendation systems. Additionally, limiting the number of features to 500 helps reduce dimensionality and computational complexity while still capturing the most relevant information.
 #### Categorical Encoding (for 'Type', 'Studios', 'Source', 'Genre_List')
-Categorical encoding is essential for transforming categorical variables into numerical representations that machine learning models can process. One-hot encoding is a popular technique for handling nominal categorical variables like 'Type', 'Studios', and 'Source'. It creates binary features for each category, allowing the model to understand the significance of each category. Similarly, for the 'Genre_List' column, we create binary features for each genre, indicating its presence or absence in each anime. By converting these categorical variables into numerical features, we enable the model to capture the underlying patterns and relationships within the data and make accurate predictions.
+Categorical encoding is essential for transforming categorical variables into numerical representations that machine learning models can process. One-hot encoding serves as a popular technique for handling nominal categorical variables like 'Type', 'Studios', and 'Source'. This method creates binary features for each category, allowing the model to understand the significance of each category. For the 'Genre_List' column, binary features are created for each genre, indicating its presence or absence in each anime. Converting these categorical variables into numerical features enables the model to capture underlying patterns and relationships within the data, facilitating more accurate predictions.
 #### Numerical Normalization (for 'Score' and 'Popularity')
-Numerical normalization is crucial for ensuring that features with different scales contribute equally to the model's learning process. Standard scaling is a common technique that transforms numerical features to have zero mean and unit variance. By standardizing the 'Score' and 'Popularity' features, we ensure that they are on the same scale, preventing features with larger magnitudes from dominating the model's decisions. This normalization step improves the model's ability to learn complex patterns and relationships within the data, leading to more accurate predictions.
+Numerical normalization is crucial for ensuring that features with different scales contribute equally to the model's learning process. Standard scaling, a common technique, transforms numerical features to have zero mean and unit variance. Standardizing the 'Score' and 'Popularity' features ensures they are on the same scale, preventing features with larger magnitudes from dominating the model's decisions. This normalization step improves the model's ability to learn complex patterns and relationships within the data, leading to more accurate predictions.
 #### Combine All Features
-Combining all features: text (e.g., synopsis TF-IDF), categorical (e.g., encoded categories), genre, and numerical features into a single feature matrix is essential because it enables the recommendation model to leverage all available information about the anime. Each feature type captures different aspects: text features provide context from the synopsis, categorical and genre features encode descriptive metadata, and numerical features (like scores) add quantitative insights. By integrating these diverse feature sets, the model can analyze a richer, more holistic representation of the data, leading to more accurate and meaningful recommendations. Converting to a dense array ensures compatibility with algorithms that require dense input formats.
+Combining all features—text (synopsis TF-IDF), categorical (encoded categories), genre, and numerical features—into a single feature matrix is essential for enabling the recommendation model to leverage all available information about the anime. Each feature type captures different aspects: text features provide context from the synopsis, categorical and genre features encode descriptive metadata, and numerical features (like scores) add quantitative insights. By integrating these diverse feature sets, the model can analyze a richer, more holistic representation of the data, leading to more accurate and meaningful recommendations. Converting to a dense array ensures compatibility with algorithms that require dense input formats.
 ### Preparation for Collaborative Filtering
 #### Encode user_id and anime_id
-Encoding user IDs and anime IDs is essential for collaborative filtering models to effectively capture user-item interactions. By assigning unique integer indices to each user and anime, we create a numerical representation that the model can process. This encoding enables the model to learn latent factors and preferences associated with specific users and items.
+Encoding user IDs and anime IDs is essential for collaborative filtering models to effectively capture user-item interactions. Assigning unique integer indices to each user and anime creates a numerical representation that the model can process. This encoding enables the model to learn latent factors and preferences associated with specific users and items.
 #### Normalize Ratings
-Normalizing the rating data is an important step when using collaborative filtering techniques for recommender systems. By dividing the ratings by 10 to scale them between 0 and 1, you're effectively accounting for differences in how individual users rate items. Some users may be more generous with high ratings, while others may be more conservative. Normalizing the ratings helps to remove this user-specific bias, allowing the collaborative filtering algorithm to better identify similarities between users and make more accurate predictions. 
+Normalizing the rating data is an important step when using collaborative filtering techniques for recommender systems. Dividing the ratings by 10 to scale them between 0 and 1 effectively accounts for differences in how individual users rate items. Some users may be more generous with high ratings, while others may be more conservative. Normalizing the ratings helps to remove this user-specific bias, allowing the collaborative filtering algorithm to better identify similarities between users and make more accurate predictions.
 
 This is crucial because collaborative filtering relies on finding patterns in how users rate items relative to each other, rather than just the raw rating values.
 #### Split the data
-Splitting the data into training, validation, and test sets is crucial for building robust and reliable collaborative filtering models. The training set is used to train the model, the validation set is used to tune hyperparameters and prevent overfitting, and the test set is used to evaluate the  final model's performance on unseen data. By splitting the data in this way, we ensure that the model is not biased towards the training data and can generalize well to new, unseen data. The specific split ratios (80%, 10%, 10%) are common and provide a good balance between training, validation, and testing.
+Splitting the data into training, validation, and test sets is crucial for building robust and reliable collaborative filtering models. The training set is used to train the model, the validation set is used to tune hyperparameters and prevent overfitting, and the test set is used to evaluate the final model's performance on unseen data. By splitting the data in this way, the model can avoid bias towards the training data and generalize well to new, unseen data. The specific split ratios (80%, 10%, 10%) are common and provide a good balance between training, validation, and testing.
 #### Convert to TensorFlow datasets
-I should convert the data into TensorFlow datasets because they provide a flexible and efficient way to handle data inputs for training, validation, and testing of my machine learning models, particularly for deep learning. By creating TensorFlow datasets, I can easily shuffle the data to introduce randomness and prevent overfitting, batch the data to optimize memory usage and processing speed during training, and prefetch the data to keep the model pipeline filled and maximize GPU utilization.
+Converting the data into TensorFlow datasets provides a flexible and efficient way to handle data inputs for training, validation, and testing of machine learning models, particularly for deep learning. Creating TensorFlow datasets allows for easy data shuffling to introduce randomness and prevent overfitting, batching to optimize memory usage and processing speed during training, and prefetching to keep the model pipeline filled and maximize GPU utilization.
 
-These features make the training process more efficient and robust, as the model can learn from the data in small, manageable batches without having to load the entire dataset into memory at once. This is particularly important for large or high-dimensional datasets, where memory constraints can become a bottleneck. By leveraging the flexibility and performance optimizations offered by TensorFlow datasets, I can streamline my machine learning workflows and improve the overall effectiveness of my models.
+These features make the training process more efficient and robust, as the model can learn from the data in small, manageable batches without having to load the entire dataset into memory at once. This is particularly important for large or high-dimensional datasets, where memory constraints can become a bottleneck. By leveraging the flexibility and performance optimizations offered by TensorFlow datasets, machine learning workflows can be streamlined and the overall effectiveness of models can be improved.
 
 ## Modeling & Results
 ### Content-Based Filtering
@@ -214,13 +195,17 @@ For unseen user-anime pairs, the model predicts ratings based on learned embeddi
 #### Training Process
 In the training step, the model is trained using the **fit()** method with a training dataset (train_ds) and a validation dataset (val_ds) to monitor its performance. The training runs for **10 epochs**, where the model iteratively learns from the training data and adjusts its weights to minimize the loss. A **ReduceLROnPlateau** callback is applied to dynamically adjust the learning rate: if the validation performance stagnates for 2 consecutive epochs (patience), the learning rate is reduced by a factor of 0.3. This helps the model converge more effectively by preventing it from overshooting the optimal solution, especially when learning begins to plateau. By combining these steps, the model aims to achieve improved generalization while efficiently utilizing the learning rate.
 #### Get 10 Recommendations
-I want to test the recommendations for user_id = 1291085
+Test the recommendations for user_id = 1291085
 
 **User 1291085 Top 20 Anime by Rating**  
 ![user 1291085 top 20 anime](./images/user-top-20-anime.png)
 
-**Top 10 Recommendations**  
+**Top 10 Recommended Anime that the User Hasn't Watched**  
 ![get collaborative filtering recommendations](./images/cf_recommendation.png)
+
+In the Top 20 Anime Rated by the User section, the user's favorite anime show ratings predominantly at 10, reflecting a strong preference for highly acclaimed titles. The list includes a mix of genres like sports (Yowamushi Pedal), action (Code Geass), romance (Clannad: After Story), and fantasy (Fullmetal Alchemist: Brotherhood). This diverse collection indicates the user's broad interest across emotional, action-packed, and thought-provoking series.
+
+The Top 10 Recommended Anime that the User Hasn't Watched section highlights recommendations generated through collaborative filtering. Titles such as "Vampire Knight" and "School Days: Magical Heart Kokoro-chan" are predicted to receive a high rating of 9.0 based on similarities in user behaviors and interactions. These recommendations span genres like romance, comedy, supernatural, and action, showcasing the system's ability to align new suggestions with the user's existing tastes. This approach effectively enhances user engagement by discovering unseen anime that resonates with their preferences.
 
 ## Evaluation
 ### Content-Based Filtering
@@ -229,12 +214,9 @@ I want to test the recommendations for user_id = 1291085
 - Content-based filtering focuses on recommending items based on item features (e.g., genres, scores, etc). Precision ensures you are evaluating how effectively the system filters and recommends only relevant items.
 - Precision avoids penalizing models for not making enough recommendations, unlike recall.
 
-![precision](./images/precision-content-based.png)  
-I choose a relevance threshold to 7.0 because:
-- This value filters out items with low ratings.
-- It aligns with user expectations for recommending quality anime.
+![precision](./images\precision-content-based.png)
 
-A precision of 80% indicates that my recommendation system performs well because most of the recommendations are considered relevant.
+A precision of 100% indicates that the recommendation algorithm performs well because all of the recommendations are considered relevant.
 
 ### Collaborative Filtering
 #### Metrics that I used:
@@ -266,16 +248,15 @@ A precision of 80% indicates that my recommendation system performs well because
     - The training RMSE and validation RMSE are close to each other, confirming the model's good generalization performance.
 
 #### Evaluate on test dataset
-![test data eval](./images/test_data_eval.png)  
-- **Test Loss: 0.0164**
+- **Test Loss: 0.0161**
     - The test loss represents the model's performance on the unseen test data.
     - A low test loss, such as 0.0164, indicates that the model is making accurate predictions on the test set.
 
-- **Test Mean Absolute Error (MAE): 0.0946**
+- **Test Mean Absolute Error (MAE): 0.0945**
     - The MAE measures the average absolute difference between the predicted and actual ratings.
     - A low MAE, like 0.0946, suggests that the model's predictions are close to the true ratings on average.
 
-- **Test Root Mean Squared Error (RMSE): 0.1265**
+- **Test Root Mean Squared Error (RMSE): 0.1254**
     - RMSE is the square root of the mean squared error (MSE), which measures the average squared difference between predicted and actual ratings.
     - RMSE gives a higher penalty to larger errors compared to MAE, making it more sensitive to outliers.
     - A low RMSE, such as 0.1265, indicates that the model is making accurate predictions with relatively small errors.
@@ -286,11 +267,5 @@ In conclusion, this project has demonstrated the effectiveness of leveraging bot
 The content-based filtering algorithm, which analyzes anime metadata such as genres, synopses, and scores, was able to accurately recommend similar titles to a user's preferences. The collaborative filtering model, which learns from user-item interactions, also proved effective in generating personalized recommendations tailored to individual user tastes.
 
 Through the use of various evaluation metrics, including precision, mean squared error (MSE), mean absolute error (MAE), and root mean squared error (RMSE), the models were thoroughly assessed to ensure their reliability and accuracy. The results indicate that the developed recommendation system can provide users with high-quality anime suggestions, enhancing their discovery and enjoyment of the vast anime landscape.
-Moving forward, there are several potential avenues for further improving and expanding this project, such as:
 
-- Incorporating additional data sources (e.g., user reviews, social media interactions) to enrich the feature set
-- Exploring hybrid recommendation approaches that combine content-based and collaborative filtering
-- Implementing advanced neural network architectures (e.g., deep learning models) to capture complex patterns in the data
-- Deploying the recommendation system as a standalone application or integrating it with existing anime platforms
-
-By continuously refining and enhancing the anime recommendation system, we can empower users to navigate the ever-growing anime universe with greater ease and satisfaction
+By continuously refining and enhancing the anime recommendation system, we can empower users to navigate the ever-growing anime industry with greater ease and satisfaction.
