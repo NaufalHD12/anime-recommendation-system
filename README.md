@@ -214,7 +214,7 @@ The Top 10 Recommended Anime that the User Hasn't Watched section highlights rec
 - Content-based filtering focuses on recommending items based on item features (e.g., genres, scores, etc). Precision ensures you are evaluating how effectively the system filters and recommends only relevant items.
 - Precision avoids penalizing models for not making enough recommendations, unlike recall.
 
-![precision](./images\precision-content-based.png)
+![precision](./images/precision-content-based.png)
 
 A precision of 100% indicates that the recommendation algorithm performs well because all of the recommendations are considered relevant.
 
